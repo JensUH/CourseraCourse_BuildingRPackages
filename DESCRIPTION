@@ -1,0 +1,11 @@
+Package: courseraProjectPackage
+Type: Package
+Title: Coursera project for Building R Packages
+Version: 1.0
+Author: Jens Ulrik Hansen
+Maintainer: Jens Ulrik Hansen <jensuhansen@gmail.com>
+Description: This package constitutes the final project in the Coursera
+  course "Building R Packages"
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
