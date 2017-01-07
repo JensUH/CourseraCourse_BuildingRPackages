@@ -6,8 +6,13 @@
 #'
 #' @param filename name of the csv file from which FARS data should be read
 #'
+#' @importFrom readr read_csv
+#' @importFrom dplyr tbl_df
+#'
 #' @examples
+#' \dontrun{
 #' data1 <- fars_read("accident_2015.csv.bz2")
+#' }
 #'
 #' @return return a tbl_df with the FARS data of the input file
 #'
@@ -16,9 +21,9 @@ fars_read <- function(filename) {
         if(!file.exists(filename))
                 stop("file '", filename, "' does not exist")
         data <- suppressMessages({
-                readr::read_csv(filename, progress = FALSE)
+                read_csv(filename, progress = FALSE)
         })
-        dplyr::tbl_df(data)
+        tbl_df(data)
 }
 
 
@@ -35,8 +40,10 @@ fars_read <- function(filename) {
 #' for the given year.
 #'
 #' @examples
+#' \dontrun{
 #' filename1 <- make_filename(2015)
 #' filename2 <- make_filename("2014")
+#' }
 #'
 #' @export
 make_filename <- function(year) {
@@ -55,9 +62,13 @@ make_filename <- function(year) {
 #' @param years a vector of years (as integers or characters)
 #'
 #' @importFrom dplyr %>%
+#' @importFrom dplyr mutate
+#' @importFrom dplyr select
 #'
 #' @examples
+#' \dontrun{
 #' datalist <- fars_read_years(list(2013, 2014))
+#' }
 #'
 #' @return a list of tibble data frames, one for each of
 #' the specified years. Each of the data frames contains
@@ -69,8 +80,8 @@ fars_read_years <- function(years) {
                 file <- make_filename(year)
                 tryCatch({
                         dat <- fars_read(file)
-                        dplyr::mutate(dat, year = year) %>%
-                          dplyr::select(MONTH, year)
+                        mutate(dat, year = year) %>%
+                          select(MONTH, year)
                 }, error = function(e) {
                         warning("invalid year: ", year, e)
                         return(NULL)
@@ -88,10 +99,15 @@ fars_read_years <- function(years) {
 #'
 #' @inheritParams fars_read_years
 #'
-#' @importFrom dplyr %>%
+#' @importFrom dplyr bind_rows
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' @importFrom tidyr spread
 #'
 #' @examples
+#' \dontrun{
 #' summary <- fars_summarize_years(list(2013, 2014))
+#' }
 #'
 #' @return a tibble data frame with a column for each
 #' input year and an additional column "MONTH".
@@ -99,10 +115,10 @@ fars_read_years <- function(years) {
 #' @export
 fars_summarize_years <- function(years) {
         dat_list <- fars_read_years(years)
-        dplyr::bind_rows(dat_list) %>%
-                dplyr::group_by(year, MONTH) %>%
-                dplyr::summarize(n = n()) %>%
-                tidyr::spread(year, n)
+        bind_rows(dat_list) %>%
+                group_by(year, MONTH) %>%
+                summarize(n = n()) %>%
+                spread(year, n)
 }
 
 
@@ -115,10 +131,10 @@ fars_summarize_years <- function(years) {
 #' @param year the year for which to plot accidents
 #' @param state.num number indicating for which state to plot accidents
 #'
-#' @importFrom maps stateMapEnv
-#'
 #' @examples
+#' \dontrun{
 #' fars_map_state(6, 2013)
+#' }
 #'
 #' @return Plots the different accidents on a state map
 #' for the given state and year
