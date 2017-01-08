@@ -1,3 +1,5 @@
+globalVariables(c('STATE', 'MONTH', 'year'))
+
 #' Reading a FARS csv data set
 #'
 #' This function reads a csv file (provided as the argument "filename") and
@@ -102,6 +104,7 @@ fars_read_years <- function(years) {
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
+#' @importFrom dplyr n
 #' @importFrom tidyr spread
 #'
 #' @examples
